@@ -372,6 +372,115 @@ def delete_transaction_books():
             return jsonify({'message': 'Missing required form data'})
     else:
         return jsonify({'message': 'Access denied'})
+    
+@app.route('/categories', methods=['GET'])
+@login_required
+def view_categories():
+    if current_user.user_type == 'admin':
+        data = Categories.query.order_by(Categories.id_category.desc()).all()
+        categories_list = []
+        for el in data:
+            categories_list.append({
+                'id_category': el.id_category,
+                'name': el.name,
+                'description': el.description
+            })
+        return {'categories': categories_list}
+    else:
+        return jsonify({'message': 'Access denied'})
+
+@app.route('/categories', methods=['POST'])
+@login_required
+def add_categories():
+    if current_user.user_type == 'admin':
+        data = Categories(
+            name = request.form['name'],
+            description = request.form['description']
+        )
+        db.session.add(data)
+        db.session.commit()
+        return jsonify({'message': 'Category added'})
+    else:
+        return jsonify({'message': 'Access denied'})
+
+@app.route('/categories', methods=['PUT'])
+@login_required
+def update_categories():
+    if current_user.user_type == 'admin':
+        data = Categories.query.get(request.form['id_category'])
+        data.name = request.form['name']
+        data.description = request.form['description']
+        db.session.commit()
+        return jsonify({'message': 'Category updated'})
+    else:
+        return jsonify({'message': 'Access denied'})
+
+@app.route('/categories', methods=['DELETE'])
+@login_required
+def delete_categories():
+    if current_user.user_type == 'admin':
+        data = Categories.query.get(request.form['id_category'])
+        db.session.delete(data)
+        db.session.commit()
+        return jsonify({'message': 'Category deleted'})
+    else:
+        return jsonify({'message': 'Access denied'})
+
+@app.route('/authors', methods=['GET'])
+@login_required
+def view_authors():
+    if current_user.user_type == 'admin':
+        data = Authors.query.order_by(Authors.id_author.desc()).all()
+        authors_list = []
+        for el in data:
+            authors_list.append({
+                'id_author': el.id_author,
+                'name': el.name,
+                'nationality': el.nationality,
+                'year_birth': el.year_birth
+            })
+        return {'authors': authors_list}
+    else:
+        return jsonify({'message': 'Access denied'})
+
+@app.route('/authors', methods=['POST'])
+@login_required
+def add_authors():
+    if current_user.user_type == 'admin':
+        data = Authors(
+            name = request.form['name'],
+            nationality = request.form['nationality'],
+            year_birth = request.form['year_birth']
+        )
+        db.session.add(data)
+        db.session.commit()
+        return jsonify({'message': 'Author added'})
+    else:
+        return jsonify({'message': 'Access denied'})
+
+@app.route('/authors', methods=['PUT'])
+@login_required
+def update_authors():
+    if current_user.user_type == 'admin':
+        data = Authors.query.get(request.form['id_author'])
+        data.name = request.form['name']
+        data.nationality = request.form['nationality']
+        data.year_birth = request.form['year_birth']
+        db.session.commit()
+        return jsonify({'message': 'Author updated'})
+    else:
+        return jsonify({'message': 'Access denied'})
+
+@app.route('/authors', methods=['DELETE'])
+@login_required
+def delete_authors():
+    if current_user.user_type == 'admin':
+        data = Authors.query.get(request.form['id_author'])
+        db.session.delete(data)
+        db.session.commit()
+        return jsonify({'message': 'Author deleted'})
+    else:
+        return jsonify({'message': 'Access denied'})
 
 if __name__ == '__main__':
     app.run(debug=True)
